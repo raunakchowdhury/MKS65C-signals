@@ -2,13 +2,19 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <signal.h>
+# include <fcntl.h>
+# include <string.h>
 
 static void sighandler(int signo){
   if (signo == SIGUSR1){
-    printf("No u \n");
+    printf("Parent process: %d \n", getppid());
   }
   else if (signo == SIGINT){
-    printf("Still no u\n");
+    int fd = open("error.txt", O_CREAT | O_WRONLY | O_APPEND);
+    char * string = "SIGINT received. Program terminated\n";
+    write(fd, string, strlen(string));
+    close(fd);
+    printf("See error.txt for details.\n");
     exit(0);
   }
 }
